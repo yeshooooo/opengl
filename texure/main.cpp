@@ -40,8 +40,84 @@ int main() {
 
 	//初始化gl3w
 	gl3wInit();
+
+
+	//初始化各种状态信息，后面用，暂时不用封装起来
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f,0.60f, 1.00f);
+
+	
+
 	//创建并绑定Imgui
 	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	//ImGui_ImplOpenGL3_Init(glsl_version); 设置着色器版本，这一步非必须，在shader文件夹中写就行
+
+	//设置字体部分
+	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\simhei.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+	
+
+
+
+	//渲染循环
+	while (!glfwWindowShouldClose(window))
+	{
+		//事件处理部分
+		// Poll and handle events (inputs, window resize, etc.)
+		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.//不要将鼠标输入数据发送到主应用程序 dispatch 发送，派遣
+		// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.不要将键盘输入数据发送到主应用程序
+		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.//将所有输入传送到imgui，将他们隐藏通过这讲个标志隐藏
+		glfwPollEvents();
+
+		//启动imgui
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+
+		//用Begin和End来创建一个窗口
+		{
+			ImGui::Begin(u8"设置");
+			ImGui::ColorEdit4(u8"渲染背景颜色", (float*)&clear_color);
+			ImGui::End();
+
+		}
+
+
+
+		//渲染窗口颜色
+		int view_width, view_height;
+		glfwGetFramebufferSize(window, &view_width, &view_height);
+		glViewport(0, 0, view_width, view_height);
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+
+		//
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		glfwSwapBuffers(window);//交换双缓存
+
+
+
+
+
+
+
+	}
+
+	//释放内存
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
+
+	return 0;
+
 
 
 }
