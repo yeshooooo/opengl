@@ -1,11 +1,11 @@
+#include <gl/glew.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <gl/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#define STB_IMAGE_IMPLEMENTATION//这行必须有，预处理器会修改头文件，让其只包含相关的函数定义源码，等于说将这个头文件变为一个cpp文件
-#include <stb_image.h>//导入图片用的
+//#define STB_IMAGE_IMPLEMENTATION//这行必须有，预处理器会修改头文件，让其只包含相关的函数定义源码，等于说将这个头文件变为一个cpp文件
+//#include <stb_image.h>//导入图片用的
 
 
 void window_size_callback(GLFWwindow* window, int width, int height);
@@ -18,6 +18,7 @@ int main() {
 
 	//实例化GLFW窗口
 	glfwInit();
+	const char* glsl_version = "#version 330";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -35,30 +36,30 @@ int main() {
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, window_size_callback);
 	glfwSwapInterval(1);
+	//初始化glew
+	glewInit();
 
-	//初始化gl3w
-	gl3wInit();
 
 
-	//初始化各种状态信息，后面用，暂时不用封装起来
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f,0.60f, 1.00f);
 
 	
 
 	//创建并绑定Imgui
+	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	ImGui::StyleColorsDark();
+	//设置渲染后端
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	//ImGui_ImplOpenGL3_Init(glsl_version); 设置着色器版本，这一步非必须，在shader文件夹中写就行
+	ImGui_ImplOpenGL3_Init(glsl_version); 
 
 	//设置字体部分
 	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\simhei.ttf", 15.0f, NULL, io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
 	
-
+	//初始化各种状态信息，后面用，暂时不用封装起来
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 
 	//渲染循环
@@ -81,7 +82,7 @@ int main() {
 		//用Begin和End来创建一个窗口
 		{
 			ImGui::Begin(u8"设置");
-			ImGui::ColorEdit4(u8"渲染背景颜色", (float*)&clear_color);
+			ImGui::ColorEdit4(u8"背景颜色", (float*)&clear_color);
 			ImGui::End();
 
 		}
@@ -89,10 +90,11 @@ int main() {
 
 
 		//渲染窗口颜色
+		ImGui::Render();
 		int view_width, view_height;
 		glfwGetFramebufferSize(window, &view_width, &view_height);
 		glViewport(0, 0, view_width, view_height);
-		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+		glClearColor(clear_color.x*clear_color.w, clear_color.y*clear_color.w, clear_color.z* clear_color.w, clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 
@@ -121,6 +123,7 @@ int main() {
 
 
 }
+
 
 
 
