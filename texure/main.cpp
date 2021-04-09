@@ -4,7 +4,7 @@
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-//#define STB_IMAGE_IMPLEMENTATION//这行必须有，预处理器会修改头文件，让其只包含相关的函数定义源码，等于说将这个头文件变为一个cpp文件
+//#define STB_IMAGE_IMPLEMENTATION//这行必须有，预处理器会修改头文件，让其只包含相关的函数定义源码，等e于说将这个头文件变为一个cpp文件
 //#include <stb_image.h>//导入图片用的
 
 
